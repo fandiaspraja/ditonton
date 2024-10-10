@@ -3,3 +3,29 @@ workflows:
     name: Dev
     max_build_duration: 120
     instance_type: mac_mini_m2
+    environment:
+      flutter: stable # Or a specific version
+      xcode: latest # Or a specific version
+
+    scripts:
+      # Set up environment
+      - name: Set up Flutter
+        script: flutter pub get
+
+      # Android build
+      - name: Build Android APK
+        script: |
+          flutter build apk --release --split-per-abi
+          find build/app/outputs/flutter-apk/ -name "*.apk" -exec mv {} build/app/outputs/apk \;
+
+      # iOS build
+      - name: Build iOS IPA
+        script: |
+          cd ios
+          pod install
+          cd ..
+          flutter build ios --release --no-codesign
+
+    artifacts:
+      - build/app/outputs/apk/*.apk
+      - build/ios/build/Release-iphoneos/*.ipa
