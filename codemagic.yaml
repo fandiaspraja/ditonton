@@ -1,0 +1,5 @@
+workflows:
+  dev-workflow:
+    name: Dev
+    max_build_duration: 120
+    instance_type: mac_mini_m2

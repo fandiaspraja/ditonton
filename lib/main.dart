@@ -1,5 +1,6 @@
 import 'package:ditonton/common/constants.dart';
 import 'package:ditonton/common/utils.dart';
+import 'package:ditonton/firebase_options.dart';
 import 'package:ditonton/presentation/pages/about_page.dart';
 import 'package:ditonton/presentation/pages/movie_detail_page.dart';
 import 'package:ditonton/presentation/pages/home_movie_page.dart';
@@ -24,12 +25,21 @@ import 'package:ditonton/presentation/provider/tvshow_detail_notifier.dart';
 import 'package:ditonton/presentation/provider/tvshow_list_notifier.dart';
 import 'package:ditonton/presentation/provider/tvshow_search_notifier.dart';
 import 'package:ditonton/presentation/provider/watchlist_movie_notifier.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 import 'package:ditonton/injection.dart' as di;
 
-void main() {
+import 'presentation/bloc/movie/movie_bloc.dart';
+import 'presentation/bloc/tvshow/tvshow_bloc.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   di.init();
   runApp(MyApp());
 }
@@ -39,6 +49,24 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
+        BlocProvider(create: (_) => di.locator<NowPlayingMovieBloc>()),
+        BlocProvider(create: (_) => di.locator<TopRatedMovieBloc>()),
+        BlocProvider(create: (_) => di.locator<PopularMovieBloc>()),
+        BlocProvider(create: (_) => di.locator<MovieDetailBloc>()),
+        BlocProvider(create: (_) => di.locator<MovieRecommendationBloc>()),
+        BlocProvider(create: (_) => di.locator<SearchBloc>()),
+        BlocProvider(create: (_) => di.locator<WatchlistBloc>()),
+
+        // TV SERIES BLOC
+        BlocProvider(create: (_) => di.locator<AiringTodayTvshowBloc>()),
+        BlocProvider(create: (_) => di.locator<OnTheAirTvshowBloc>()),
+        BlocProvider(create: (_) => di.locator<PopularTvshowBloc>()),
+        BlocProvider(create: (_) => di.locator<TopRatedTvshowBloc>()),
+        BlocProvider(create: (_) => di.locator<TvshowDetailBloc>()),
+        BlocProvider(create: (_) => di.locator<TvshowRecommendationBloc>()),
+        BlocProvider(create: (_) => di.locator<SearchTvshowBloc>()),
+        BlocProvider(create: (_) => di.locator<WatchlistTvshowBloc>()),
+
         ChangeNotifierProvider(
           create: (_) => di.locator<MovieListNotifier>(),
         ),

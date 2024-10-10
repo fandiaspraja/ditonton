@@ -3,6 +3,8 @@ import 'package:ditonton/common/constants.dart';
 import 'package:ditonton/domain/entities/movie.dart';
 import 'package:ditonton/domain/entities/tvshow.dart';
 import 'package:ditonton/domain/entities/tvshow_detail.dart';
+import 'package:ditonton/presentation/bloc/movie/movie_bloc.dart';
+import 'package:ditonton/presentation/bloc/tvshow/tvshow_bloc.dart';
 import 'package:ditonton/presentation/pages/about_page.dart';
 import 'package:ditonton/presentation/pages/movie_detail_page.dart';
 import 'package:ditonton/presentation/pages/ontheair_tvshows_page.dart';
@@ -18,6 +20,7 @@ import 'package:ditonton/presentation/provider/movie_list_notifier.dart';
 import 'package:ditonton/common/state_enum.dart';
 import 'package:ditonton/presentation/provider/tvshow_list_notifier.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 
 class HomeMoviePage extends StatefulWidget {
@@ -30,18 +33,29 @@ class _HomeMoviePageState extends State<HomeMoviePage> {
   @override
   void initState() {
     super.initState();
-    Future.microtask(
-        () => Provider.of<MovieListNotifier>(context, listen: false)
-          ..fetchNowPlayingMovies()
-          ..fetchPopularMovies()
-          ..fetchTopRatedMovies());
+    // Future.microtask(
+    //     () => Provider.of<MovieListNotifier>(context, listen: false)
+    //       ..fetchNowPlayingMovies()
+    //       ..fetchPopularMovies()
+    //       ..fetchTopRatedMovies());
 
-    Future.microtask(
-        () => Provider.of<TvshowListNotifier>(context, listen: false)
-          ..fetchAiringTodayTvshows()
-          ..fetchOntheairTvshows()
-          ..fetchPopularTvshows()
-          ..fetchTopRatedTvshows());
+    Future.microtask(() {
+      context.read<NowPlayingMovieBloc>().add(FetchNowPlayingMovies());
+      context.read<PopularMovieBloc>().add(FetchPopularMovies());
+      context.read<TopRatedMovieBloc>().add(FetchTopRatedMovies());
+
+      context.read<AiringTodayTvshowBloc>().add(FetchAiringTodayTvshows());
+      context.read<OnTheAirTvshowBloc>().add(FetchOntheairTvshows());
+      context.read<PopularTvshowBloc>().add(FetchPopularTvshows());
+      context.read<TopRatedTvshowBloc>().add(FetchTopRatedTvshows());
+    });
+
+    // Future.microtask(
+    //     () => Provider.of<TvshowListNotifier>(context, listen: false)
+    //       ..fetchAiringTodayTvshows()
+    //       ..fetchOntheairTvshows()
+    //       ..fetchPopularTvshows()
+    //       ..fetchTopRatedTvshows());
   }
 
   @override
@@ -124,17 +138,20 @@ class _HomeMoviePageState extends State<HomeMoviePage> {
                       'Now Playing',
                       style: kHeading6,
                     ),
-                    Consumer<MovieListNotifier>(
-                        builder: (context, data, child) {
-                      final state = data.nowPlayingState;
-                      if (state == RequestState.Loading) {
+                    BlocBuilder<NowPlayingMovieBloc, MovieStateBloc>(
+                        builder: (context, state) {
+                      if (state is MoviesLoading) {
+                        return Center(child: CircularProgressIndicator());
+                      } else if (state is MoviesHasData) {
+                        return MovieList(state.movie);
+                      } else if (state is MoviesError) {
                         return Center(
-                          child: CircularProgressIndicator(),
+                          child: Text(state.message),
                         );
-                      } else if (state == RequestState.Loaded) {
-                        return MovieList(data.nowPlayingMovies);
                       } else {
-                        return Text('Failed');
+                        return Center(
+                          child: Text('No Movies Data'),
+                        );
                       }
                     }),
                     _buildSubHeading(
@@ -142,17 +159,20 @@ class _HomeMoviePageState extends State<HomeMoviePage> {
                       onTap: () => Navigator.pushNamed(
                           context, PopularMoviesPage.ROUTE_NAME),
                     ),
-                    Consumer<MovieListNotifier>(
-                        builder: (context, data, child) {
-                      final state = data.popularMoviesState;
-                      if (state == RequestState.Loading) {
+                    BlocBuilder<PopularMovieBloc, MovieStateBloc>(
+                        builder: (context, state) {
+                      if (state is MoviesLoading) {
+                        return Center(child: CircularProgressIndicator());
+                      } else if (state is MoviesHasData) {
+                        return MovieList(state.movie);
+                      } else if (state is MoviesError) {
                         return Center(
-                          child: CircularProgressIndicator(),
+                          child: Text(state.message),
                         );
-                      } else if (state == RequestState.Loaded) {
-                        return MovieList(data.popularMovies);
                       } else {
-                        return Text('Failed');
+                        return Center(
+                          child: Text('No Movies Data'),
+                        );
                       }
                     }),
                     _buildSubHeading(
@@ -160,17 +180,20 @@ class _HomeMoviePageState extends State<HomeMoviePage> {
                       onTap: () => Navigator.pushNamed(
                           context, TopRatedMoviesPage.ROUTE_NAME),
                     ),
-                    Consumer<MovieListNotifier>(
-                        builder: (context, data, child) {
-                      final state = data.topRatedMoviesState;
-                      if (state == RequestState.Loading) {
+                    BlocBuilder<TopRatedMovieBloc, MovieStateBloc>(
+                        builder: (context, state) {
+                      if (state is MoviesLoading) {
+                        return Center(child: CircularProgressIndicator());
+                      } else if (state is MoviesHasData) {
+                        return MovieList(state.movie);
+                      } else if (state is MoviesError) {
                         return Center(
-                          child: CircularProgressIndicator(),
+                          child: Text(state.message),
                         );
-                      } else if (state == RequestState.Loaded) {
-                        return MovieList(data.topRatedMovies);
                       } else {
-                        return Text('Failed');
+                        return Center(
+                          child: Text('No Movies Data'),
+                        );
                       }
                     }),
                   ],
@@ -187,17 +210,20 @@ class _HomeMoviePageState extends State<HomeMoviePage> {
                       'Airing Today',
                       style: kHeading6,
                     ),
-                    Consumer<TvshowListNotifier>(
-                        builder: (context, data, child) {
-                      final state = data.airingTodayTvshowsState;
-                      if (state == RequestState.Loading) {
+                    BlocBuilder<AiringTodayTvshowBloc, TvshowStateBloc>(
+                        builder: (context, state) {
+                      if (state is TvshowLoading) {
+                        return Center(child: CircularProgressIndicator());
+                      } else if (state is TvshowsHasData) {
+                        return TvshowList(state.tvshow);
+                      } else if (state is TvshowsError) {
                         return Center(
-                          child: CircularProgressIndicator(),
+                          child: Text(state.message),
                         );
-                      } else if (state == RequestState.Loaded) {
-                        return TvshowList(data.airingTodayTvshows);
                       } else {
-                        return Text('Failed');
+                        return Center(
+                          child: Text('No Tvshows Data'),
+                        );
                       }
                     }),
                     _buildSubHeading(
@@ -205,17 +231,20 @@ class _HomeMoviePageState extends State<HomeMoviePage> {
                       onTap: () => Navigator.pushNamed(
                           context, OntheairTvshowsPage.ROUTE_NAME),
                     ),
-                    Consumer<TvshowListNotifier>(
-                        builder: (context, data, child) {
-                      final state = data.onTheAirTvshowsState;
-                      if (state == RequestState.Loading) {
+                    BlocBuilder<OnTheAirTvshowBloc, TvshowStateBloc>(
+                        builder: (context, state) {
+                      if (state is TvshowLoading) {
+                        return Center(child: CircularProgressIndicator());
+                      } else if (state is TvshowsHasData) {
+                        return TvshowList(state.tvshow);
+                      } else if (state is TvshowsError) {
                         return Center(
-                          child: CircularProgressIndicator(),
+                          child: Text(state.message),
                         );
-                      } else if (state == RequestState.Loaded) {
-                        return TvshowList(data.onTheAirTvshows);
                       } else {
-                        return Text('Failed');
+                        return Center(
+                          child: Text('No Tvshows Data'),
+                        );
                       }
                     }),
                     _buildSubHeading(
@@ -223,17 +252,20 @@ class _HomeMoviePageState extends State<HomeMoviePage> {
                       onTap: () => Navigator.pushNamed(
                           context, PopularTvshowsPage.ROUTE_NAME),
                     ),
-                    Consumer<TvshowListNotifier>(
-                        builder: (context, data, child) {
-                      final state = data.popularTvshowsState;
-                      if (state == RequestState.Loading) {
+                    BlocBuilder<PopularTvshowBloc, TvshowStateBloc>(
+                        builder: (context, state) {
+                      if (state is TvshowLoading) {
+                        return Center(child: CircularProgressIndicator());
+                      } else if (state is TvshowsHasData) {
+                        return TvshowList(state.tvshow);
+                      } else if (state is TvshowsError) {
                         return Center(
-                          child: CircularProgressIndicator(),
+                          child: Text(state.message),
                         );
-                      } else if (state == RequestState.Loaded) {
-                        return TvshowList(data.popularTvshows);
                       } else {
-                        return Text('Failed');
+                        return Center(
+                          child: Text('No Tvshows Data'),
+                        );
                       }
                     }),
                     _buildSubHeading(
@@ -241,17 +273,20 @@ class _HomeMoviePageState extends State<HomeMoviePage> {
                       onTap: () => Navigator.pushNamed(
                           context, TopRatedTvshowsPage.ROUTE_NAME),
                     ),
-                    Consumer<TvshowListNotifier>(
-                        builder: (context, data, child) {
-                      final state = data.topRatedTvshowsState;
-                      if (state == RequestState.Loading) {
+                    BlocBuilder<TopRatedTvshowBloc, TvshowStateBloc>(
+                        builder: (context, state) {
+                      if (state is TvshowLoading) {
+                        return Center(child: CircularProgressIndicator());
+                      } else if (state is TvshowsHasData) {
+                        return TvshowList(state.tvshow);
+                      } else if (state is TvshowsError) {
                         return Center(
-                          child: CircularProgressIndicator(),
+                          child: Text(state.message),
                         );
-                      } else if (state == RequestState.Loaded) {
-                        return TvshowList(data.topRatedTvshows);
                       } else {
-                        return Text('Failed');
+                        return Center(
+                          child: Text('No Tvshows Data'),
+                        );
                       }
                     }),
                   ],

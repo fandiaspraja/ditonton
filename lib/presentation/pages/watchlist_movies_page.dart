@@ -1,9 +1,11 @@
 import 'package:ditonton/common/state_enum.dart';
 import 'package:ditonton/common/utils.dart';
 import 'package:ditonton/domain/entities/tvshow.dart';
+import 'package:ditonton/presentation/bloc/movie/movie_bloc.dart';
 import 'package:ditonton/presentation/provider/watchlist_movie_notifier.dart';
 import 'package:ditonton/presentation/widgets/movie_card_list.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 
 import '../widgets/tvshow_card_list.dart';
@@ -20,9 +22,12 @@ class _WatchlistMoviesPageState extends State<WatchlistMoviesPage>
   @override
   void initState() {
     super.initState();
-    Future.microtask(() =>
-        Provider.of<WatchlistMovieNotifier>(context, listen: false)
-            .fetchWatchlistMovies());
+
+    Future.microtask(
+        () => context.read<WatchlistBloc>().add(FetchWatchlistMovies()));
+    // Future.microtask(() =>
+    //     Provider.of<WatchlistMovieNotifier>(context, listen: false)
+    //         .fetchWatchlistMovies());
   }
 
   @override
@@ -32,8 +37,9 @@ class _WatchlistMoviesPageState extends State<WatchlistMoviesPage>
   }
 
   void didPopNext() {
-    Provider.of<WatchlistMovieNotifier>(context, listen: false)
-        .fetchWatchlistMovies();
+    context.read<WatchlistBloc>().add(FetchWatchlistMovies());
+    // Provider.of<WatchlistMovieNotifier>(context, listen: false)
+    //     .fetchWatchlistMovies();
   }
 
   @override
@@ -44,40 +50,81 @@ class _WatchlistMoviesPageState extends State<WatchlistMoviesPage>
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Consumer<WatchlistMovieNotifier>(
-          builder: (context, data, child) {
-            if (data.watchlistState == RequestState.Loading) {
+        child: BlocBuilder<WatchlistBloc, MovieStateBloc>(
+          builder: (context, state) {
+            if (state is MoviesLoading) {
               return Center(
                 child: CircularProgressIndicator(),
               );
-            } else if (data.watchlistState == RequestState.Loaded) {
-              return ListView.builder(
-                itemBuilder: (context, index) {
-                  final movie = data.watchlistMovies[index];
-
-                  if (movie.type == "tvshow") {
-                    var tvshow = Tvshow.watchlist(
-                      id: movie.id,
-                      overview: movie.overview,
-                      posterPath: movie.posterPath,
-                      originalName: movie.title,
-                      type: movie.type,
-                    );
-                    return TvshowCard(tvshow);
-                  } else {
-                    return MovieCard(movie);
-                  }
-                },
-                itemCount: data.watchlistMovies.length,
+            } else if (state is WatchlistMovieState) {
+              if (state.movies.length < 1) {
+                return Center(
+                  child: Text('No movies added yet'),
+                );
+              } else {
+                return ListView.builder(
+                  itemBuilder: (context, index) {
+                    final movie = state.movies[index];
+                    if (movie.type == "tvshow") {
+                      var tvshow = Tvshow.watchlist(
+                        id: movie.id,
+                        overview: movie.overview,
+                        posterPath: movie.posterPath,
+                        originalName: movie.title,
+                        type: movie.type,
+                      );
+                      return TvshowCard(tvshow);
+                    } else {
+                      return MovieCard(movie);
+                    }
+                  },
+                  itemCount: state.movies.length,
+                );
+              }
+            } else if (state is MoviesError) {
+              return Center(
+                child: Text(state.message),
               );
             } else {
-              return Center(
-                key: Key('error_message'),
-                child: Text(data.message),
-              );
+              return Text('can\'t load data');
             }
           },
         ),
+
+        // Consumer<WatchlistMovieNotifier>(
+        //   builder: (context, data, child) {
+        //     if (data.watchlistState == RequestState.Loading) {
+        //       return Center(
+        //         child: CircularProgressIndicator(),
+        //       );
+        //     } else if (data.watchlistState == RequestState.Loaded) {
+        //       return ListView.builder(
+        //         itemBuilder: (context, index) {
+        //           final movie = data.watchlistMovies[index];
+
+        //           if (movie.type == "tvshow") {
+        //             var tvshow = Tvshow.watchlist(
+        //               id: movie.id,
+        //               overview: movie.overview,
+        //               posterPath: movie.posterPath,
+        //               originalName: movie.title,
+        //               type: movie.type,
+        //             );
+        //             return TvshowCard(tvshow);
+        //           } else {
+        //             return MovieCard(movie);
+        //           }
+        //         },
+        //         itemCount: data.watchlistMovies.length,
+        //       );
+        //     } else {
+        //       return Center(
+        //         key: Key('error_message'),
+        //         child: Text(data.message),
+        //       );
+        //     }
+        //   },
+        // ),
       ),
     );
   }

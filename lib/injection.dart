@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:ditonton/data/datasources/db/database_helper.dart';
 import 'package:ditonton/data/datasources/movie_local_data_source.dart';
 import 'package:ditonton/data/datasources/movie_remote_data_source.dart';
@@ -26,6 +28,8 @@ import 'package:ditonton/domain/usecases/save_watchlist.dart';
 import 'package:ditonton/domain/usecases/save_watchlist_tvshow.dart';
 import 'package:ditonton/domain/usecases/search_movies.dart';
 import 'package:ditonton/domain/usecases/search_tvshows.dart';
+import 'package:ditonton/presentation/bloc/movie/movie_bloc.dart';
+import 'package:ditonton/presentation/bloc/tvshow/tvshow_bloc.dart';
 import 'package:ditonton/presentation/provider/movie_detail_notifier.dart';
 import 'package:ditonton/presentation/provider/movie_list_notifier.dart';
 import 'package:ditonton/presentation/provider/movie_search_notifier.dart';
@@ -39,12 +43,43 @@ import 'package:ditonton/presentation/provider/tvshow_list_notifier.dart';
 import 'package:ditonton/presentation/provider/tvshow_search_notifier.dart';
 import 'package:ditonton/presentation/provider/watchlist_movie_notifier.dart';
 import 'package:ditonton/presentation/provider/watchlist_tvshow_notifier.dart';
+import 'package:ditonton/ssl_pinning.dart';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:get_it/get_it.dart';
 
 final locator = GetIt.instance;
 
 void init() {
+  // Movie BloC
+  locator.registerFactory(() => NowPlayingMovieBloc(locator()));
+  locator.registerFactory(() => PopularMovieBloc(locator()));
+  locator.registerFactory(() => TopRatedMovieBloc(locator()));
+  locator.registerFactory(() => MovieDetailBloc(locator()));
+  locator.registerFactory(() => MovieRecommendationBloc(locator()));
+  locator.registerFactory(() => SearchBloc(locator()));
+  locator.registerFactory(() => WatchlistBloc(
+        locator(),
+        locator(),
+        locator(),
+        locator(),
+      ));
+
+  // Tv Series BloC
+  locator.registerFactory(() => AiringTodayTvshowBloc(locator()));
+  locator.registerFactory(() => OnTheAirTvshowBloc(locator()));
+  locator.registerFactory(() => PopularTvshowBloc(locator()));
+  locator.registerFactory(() => TopRatedTvshowBloc(locator()));
+  locator.registerFactory(() => TvshowDetailBloc(locator()));
+  locator.registerFactory(() => TvshowRecommendationBloc(locator()));
+  locator.registerFactory(() => SearchTvshowBloc(locator()));
+  locator.registerFactory(() => WatchlistTvshowBloc(
+        locator(),
+        locator(),
+        locator(),
+        locator(),
+      ));
+
   // provider
   locator.registerFactory(
     () => MovieListNotifier(
@@ -173,5 +208,5 @@ void init() {
   locator.registerLazySingleton<DatabaseHelper>(() => DatabaseHelper());
 
   // external
-  locator.registerLazySingleton(() => http.Client());
+  locator.registerLazySingleton(() => SslPinning.client);
 }
