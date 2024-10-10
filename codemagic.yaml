@@ -21,6 +21,7 @@ workflows:
       # iOS build
       - name: Build iOS IPA
         script: |
+          sudo gem update cocoapods
           cd ios
           pod install
           cd ..
@@ -29,3 +30,12 @@ workflows:
     artifacts:
       - build/app/outputs/apk/*.apk
       - build/ios/build/Release-iphoneos/*.ipa
+
+    publishing:
+      email:
+        # Replace with your email address
+        recipients:
+          - fandiaspraja@gmail.com
+        notify:
+          success: true
+          failure: false

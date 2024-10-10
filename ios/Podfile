@@ -7,6 +7,9 @@ target 'Runner' do
 
   # Pods for Runner
   pod 'Firebase/Core'
+  pod 'Firebase/Crashlytics'
+  pod 'Firebase/Analytics'
+
 
   target 'RunnerTests' do
     inherit! :search_paths
