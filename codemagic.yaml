@@ -27,14 +27,14 @@ workflows:
           flutter build ios --no-codesign
 
       # Archive the iOS .app bundle into a zip
-      - name: Zip the iOS .app bundle
-        script: |
-          cd build/ios/iphoneos
-          zip -r Runner.app.zip Runner.app
+      # - name: Zip the iOS .app bundle
+      #   script: |
+      #     cd build/ios/iphoneos
+      #     zip -r Runner.app.zip Runner.app
 
     artifacts:
       - build/app/outputs/flutter-apk/app-debug.apk # APK for Android
-      - build/ios/iphoneos/Runner.app.zip
+      - build/ios/iphoneos/Runner.app
       - coverage/ #include coverage reports
 
     publishing:
