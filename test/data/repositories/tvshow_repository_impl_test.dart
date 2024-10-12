@@ -29,20 +29,21 @@ void main() {
   });
 
   final tTvshowModel = TvshowModel(
-      adult: false,
-      backdropPath: "/5S0SI4NjyMji05OPL0GOZ4BsiMh.jpg",
-      genreIds: [1, 2, 3],
-      id: 1,
-      originCountry: ["NL"],
-      originalLanguage: "nl",
-      originalName: 'Lang Leve de Liefde',
-      overview: 'overview',
-      popularity: 3416.968,
-      posterPath: "/5S0SI4NjyMji05OPL0GOZ4BsiMh.jpg",
-      firstAirDate: "2020-01-20",
-      name: "Lang Leve de Liefde",
-      voteAverage: 6.3,
-      voteCount: 6);
+    adult: false,
+    backdropPath: "/5S0SI4NjyMji05OPL0GOZ4BsiMh.jpg",
+    genreIds: [1, 2, 3],
+    id: 1,
+    originCountry: ["NL"],
+    originalLanguage: "nl",
+    originalName: 'Lang Leve de Liefde',
+    overview: 'overview',
+    popularity: 3416.968,
+    posterPath: "/5S0SI4NjyMji05OPL0GOZ4BsiMh.jpg",
+    firstAirDate: "2020-01-20",
+    name: "Lang Leve de Liefde",
+    voteAverage: 6.3,
+    voteCount: 6,
+  );
 
   final tTvshow = Tvshow(
       adult: false,
@@ -58,7 +59,8 @@ void main() {
       firstAirDate: "2020-01-20",
       name: "Lang Leve de Liefde",
       voteAverage: 6.3,
-      voteCount: 6);
+      voteCount: 6,
+      type: "tvshow");
 
   final tTvshowModelList = <TvshowModel>[tTvshowModel];
   final tTvshowList = <Tvshow>[tTvshow];

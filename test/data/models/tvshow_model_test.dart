@@ -19,19 +19,19 @@ void main() {
   );
 
   final tTvshow = Tvshow(
-    adult: false,
-    backdropPath: 'backdropPath',
-    genreIds: [1, 2, 3],
-    id: 1,
-    originalName: 'originalName',
-    overview: 'overview',
-    popularity: 1,
-    posterPath: 'posterPath',
-    firstAirDate: 'firstAirDate',
-    name: 'name',
-    voteAverage: 1,
-    voteCount: 1,
-  );
+      adult: false,
+      backdropPath: 'backdropPath',
+      genreIds: [1, 2, 3],
+      id: 1,
+      originalName: 'originalName',
+      overview: 'overview',
+      popularity: 1,
+      posterPath: 'posterPath',
+      firstAirDate: 'firstAirDate',
+      name: 'name',
+      voteAverage: 1,
+      voteCount: 1,
+      type: "tvshow");
 
   test('should be a subclass of Tvshow entity', () async {
     final result = tTvshowModel.toEntity();
