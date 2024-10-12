@@ -22,8 +22,6 @@ workflows:
           flutter build apk --debug
 
       # iOS build
-      - name: Build iOS IPA
-        script: pod install
       - name: Build Debug for iOS
         script: xcodebuild -workspace ios/Runner.xcworkspace -scheme Runner -configuration Debug -sdk iphoneos -arch arm64 ONLY_ACTIVE_ARCH=NO CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO
         # script: |
