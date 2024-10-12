@@ -38,8 +38,8 @@ import 'presentation/bloc/tvshow/tvshow_bloc.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+      // options: DefaultFirebaseOptions.currentPlatform,
+      );
   di.init();
   runApp(MyApp());
 }

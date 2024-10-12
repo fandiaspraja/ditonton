@@ -2,7 +2,6 @@ import Flutter
 import UIKit
 import FirebaseCore
 
-
 @main
 @objc class AppDelegate: FlutterAppDelegate {
   override func application(

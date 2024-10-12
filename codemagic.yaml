@@ -12,6 +12,10 @@ workflows:
       - name: Set up Flutter
         script: flutter pub get
 
+      # Run Tests (Add this section)
+      - name: Run Flutter Tests
+        script: flutter test --coverage
+
       # Android build
       - name: Build Android APK
         script: |
@@ -30,12 +34,13 @@ workflows:
     artifacts:
       - build/app/outputs/apk/*.apk
       - build/ios/build/Release-iphoneos/*.ipa
+      - coverage/ #include coverage reports
 
     publishing:
       email:
         # Replace with your email address
         recipients:
           - fandiaspraja@gmail.com
-        notify:
-          success: true
-          failure: false
+        # notify:
+        #   success: true
+        #   failure: false
