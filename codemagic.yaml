@@ -33,7 +33,6 @@ workflows:
 
     artifacts:
       - build/app/outputs/apk/*.apk
-      - build/ios/build/Release-iphoneos/*.ipa
       - coverage/ #include coverage reports
 
     publishing:
