@@ -30,7 +30,7 @@ workflows:
 
       # iOS build
       - name: Build Debug for iOS
-        script: flutter build ios --no-codesign
+        script: flutter build ios --no-codesign --simulator
 
       # Zip the iOS .app bundle
       - name: Zip the iOS .app bundle
