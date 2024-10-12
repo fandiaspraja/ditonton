@@ -23,8 +23,11 @@ workflows:
 
       # iOS build
       - name: Build iOS IPA
-        script: |
-          flutter build ios --no-codesign
+        script: pod install
+      - name: Build Debug for iOS
+        script: xcodebuild -workspace ios/Runner.xcworkspace -scheme Runner -configuration Debug -sdk iphoneos -arch arm64 ONLY_ACTIVE_ARCH=NO CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO
+        # script: |
+        #   flutter build ios --no-codesign
 
       # Archive the iOS .app bundle into a zip
       # - name: Zip the iOS .app bundle
@@ -34,7 +37,7 @@ workflows:
 
     artifacts:
       - build/app/outputs/flutter-apk/app-debug.apk # APK for Android
-      - build/ios/iphoneos/Runner.app
+      - build/ios/ipa
       - coverage/ #include coverage reports
 
     publishing:
