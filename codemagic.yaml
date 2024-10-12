@@ -25,11 +25,11 @@ workflows:
       # iOS build
       - name: Build iOS IPA
         script: |
-          sudo gem update cocoapods
-          cd ios
-          pod install
-          cd ..
-          flutter build ios --release --no-codesign
+          xcodebuild -workspace ios/Runner.xcworkspace \
+                     -scheme Runner \
+                     -sdk iphoneos \
+                     -configuration Release \
+                     build CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO
 
     artifacts:
       - build/app/outputs/apk/*.apk
