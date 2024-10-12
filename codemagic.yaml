@@ -24,7 +24,9 @@ workflows:
 
       # Install CocoaPods dependencies
       - name: Install CocoaPods
-        script: pod install
+        script: |
+          cd ios
+          pod install
 
       # iOS build
       - name: Build Debug for iOS
