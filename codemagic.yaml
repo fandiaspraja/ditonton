@@ -1,3 +1,53 @@
+# workflows:
+#   dev-workflow:
+#     name: Dev
+#     max_build_duration: 120
+#     instance_type: mac_mini_m2
+#     environment:
+#       flutter: stable # Or a specific version
+#       xcode: latest # Or a specific version
+#       cocoapods: default
+
+#     scripts:
+#       # Set up environment
+#       - name: Set up Flutter
+#         script: flutter pub get
+
+#       # Run Tests (Add this section)
+#       - name: Run Flutter Tests
+#         script: flutter test --coverage
+
+#       # Android build
+#       - name: Build Android APK
+#         script: |
+#           flutter build apk --debug
+
+#       # iOS build
+#       - name: Build Debug for iOS
+#         script: xcodebuild -workspace ios/Runner.xcworkspace -scheme Runner -configuration Debug -sdk iphoneos -arch arm64 ONLY_ACTIVE_ARCH=NO CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO
+#         # script: |
+#         #   flutter build ios --no-codesign
+
+#       # Archive the iOS .app bundle into a zip
+#       # - name: Zip the iOS .app bundle
+#       #   script: |
+#       #     cd build/ios/iphoneos
+#       #     zip -r Runner.app.zip Runner.app
+
+#     artifacts:
+#       - build/app/outputs/flutter-apk/app-debug.apk # APK for Android
+#       - build/ios/ipa
+#       - coverage/ #include coverage reports
+
+#     publishing:
+#       email:
+#         # Replace with your email address
+#         recipients:
+#           - fandiaspraja@gmail.com
+#         # notify:
+#         #   success: true
+#         #   failure: false
+
 workflows:
   dev-workflow:
     name: Dev
@@ -6,13 +56,14 @@ workflows:
     environment:
       flutter: stable # Or a specific version
       xcode: latest # Or a specific version
+      cocoapods: default
 
     scripts:
       # Set up environment
       - name: Set up Flutter
         script: flutter pub get
 
-      # Run Tests (Add this section)
+      # Run Tests
       - name: Run Flutter Tests
         script: flutter test --coverage
 
@@ -21,28 +72,20 @@ workflows:
         script: |
           flutter build apk --debug
 
-      # iOS build
-      - name: Build Debug for iOS
+      # iOS build for physical device (Debug Mode, No Code Signing)
+      - name: Build Debug for iOS Device
         script: xcodebuild -workspace ios/Runner.xcworkspace -scheme Runner -configuration Debug -sdk iphoneos -arch arm64 ONLY_ACTIVE_ARCH=NO CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO
-        # script: |
-        #   flutter build ios --no-codesign
 
-      # Archive the iOS .app bundle into a zip
-      # - name: Zip the iOS .app bundle
-      #   script: |
-      #     cd build/ios/iphoneos
-      #     zip -r Runner.app.zip Runner.app
+      # iOS build for Simulator (Debug Mode)
+      - name: Build Debug for iOS Simulator
+        script: xcodebuild -workspace ios/Runner.xcworkspace -scheme Runner -configuration Debug -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 16 Pro Max,OS=18.0'
 
     artifacts:
       - build/app/outputs/flutter-apk/app-debug.apk # APK for Android
-      - build/ios/ipa
-      - coverage/ #include coverage reports
+      - build/ios/ipa # iOS device build output
+      - coverage/ # Include coverage reports
 
     publishing:
       email:
-        # Replace with your email address
         recipients:
           - fandiaspraja@gmail.com
-        # notify:
-        #   success: true
-        #   failure: false
