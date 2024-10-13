@@ -30,11 +30,11 @@ workflows:
 
       # iOS build
       - name: Build Debug for iOS
-        script: flutter build ios --no-codesign
+        script: flutter build ios --no-codesign --simulator
 
     artifacts:
       - build/app/outputs/flutter-apk/app-debug.apk # APK for Android
-      - build/ios/iphoneos/Runner.app
+      - build/ios/iphonesimulator/Runner.app
       - coverage/ #include coverage reports
 
     publishing:
