@@ -4,9 +4,9 @@ workflows:
     max_build_duration: 120
     instance_type: mac_mini_m2
     environment:
-      flutter: stable # Or a specific version
-      xcode: latest # Or a specific version
-      cocoapods: default
+      flutter: 3.24.3 # Or a specific version
+      xcode: 15.4 # Or a specific version
+      cocoapods: 1.15.2
 
     scripts:
       # Set up environment
@@ -30,10 +30,10 @@ workflows:
 
       # iOS build
       - name: Build Debug for iOS
-        script: flutter build ios --no-codesign --simulator
+        script: flutter build ios --no-codesign
 
       # Zip the iOS .app bundle
-      - name: Zip the iOS .app bundle
+      - name: Zip the iOS .apk
         script: |
           cd build/ios/iphoneos
           zip -r Runner.app.zip Runner.app
