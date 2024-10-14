@@ -5,9 +5,7 @@ import 'package:ditonton/domain/entities/tvshow.dart';
 import 'package:ditonton/domain/entities/tvshow_detail.dart';
 import 'package:ditonton/presentation/bloc/tvshow/tvshow_bloc.dart';
 
-import 'package:ditonton/presentation/provider/movie_detail_notifier.dart';
 import 'package:ditonton/common/state_enum.dart';
-import 'package:ditonton/presentation/provider/tvshow_detail_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
